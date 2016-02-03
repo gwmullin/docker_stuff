@@ -1,0 +1,19 @@
+nzedb:
+  build: .
+  ports: 
+    - "8800:8800"
+  links:
+    - nzedb_db
+  volumes:
+    - /data/docker_volumes/covers:/volumes/covers
+    - /data/docker_volumes/nzbfiles:/volumes/nzbfiles
+
+nzedb_db:
+  image: mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: 'blahBLAHblah'
+    MYSQL_DATABASE: 'nzedb'
+    MYSQL_USER: 'nZED'
+    MYSQL_PASSWORD: 'i8eight8s'
+  volumes:
+    - /data/docker_volumes/mysql:/var/lib/mysql
