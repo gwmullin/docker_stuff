@@ -9,3 +9,5 @@ plex:
     - "/data/docker_volumes/plex_config:/config"
   net: "host"
   restart: always
+  environment:
+    TZ: 'America/Los_Angeles'

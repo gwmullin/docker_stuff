@@ -1,5 +1,7 @@
 FROM ubuntu:trusty
 
+ENV TZ America/Los_Angeles
+
 # Set maintainer
 MAINTAINER gwmullin <gwmullin@gmail.com>
 

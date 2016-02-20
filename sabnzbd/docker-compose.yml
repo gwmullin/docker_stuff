@@ -9,3 +9,5 @@ sabnzbd:
   ports:
     - "192.168.1.2:8888:8080"
   restart: always
+  environment:
+    TZ: 'America/Los_Angeles'
