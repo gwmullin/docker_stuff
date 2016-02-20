@@ -1,10 +1,10 @@
 FROM ubuntu:trusty
 
 # Set maintainer
-MAINTAINER connorxxl <christian.flaig@gmail.com>
+MAINTAINER gwmullin <gwmullin@gmail.com>
 
 # Set correct environment variables.
-ENV TZ Europe/Berlin
+ENV TZ America/Los_Angeles
 ENV HOME /root
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
@@ -21,7 +21,7 @@ RUN \
 RUN apt-get install -y curl git htop man software-properties-common unzip vim wget ntp ntpdate time
 
 # Install additional software.
-RUN apt-get install -y htop nmon vnstat tcptrack bwm-ng mytop
+RUN apt-get install -y htop nmon vnstat tcptrack bwm-ng mytop libzen0 lame p7zip-full libav-tools
 
 # Install Python MySQL modules.
 RUN \
@@ -44,10 +44,12 @@ RUN \
 RUN apt-get install -y php5 php5-cli php5-dev php-pear php5-gd php5-mysqlnd php5-curl php5-json
 RUN sed -ri 's/(max_execution_time =) ([0-9]+)/\1 120/' /etc/php5/cli/php.ini
 RUN sed -ri 's/(memory_limit =) ([0-9]+)/\1 -1/' /etc/php5/cli/php.ini
-RUN sed -ri 's/;(date.timezone =)/\1 Europe\/Berlin/' /etc/php5/cli/php.ini
+RUN sed -ri 's/;(date.timezone =)/\1 America\/Los_Angeles/' /etc/php5/cli/php.ini
 RUN sed -ri 's/(max_execution_time =) ([0-9]+)/\1 120/' /etc/php5/apache2/php.ini
 RUN sed -ri 's/(memory_limit =) ([0-9]+)/\1 1024/' /etc/php5/apache2/php.ini
-RUN sed -ri 's/;(date.timezone =)/\1 Europe\/Berlin/' /etc/php5/apache2/php.ini
+RUN sed -ri 's/;(date.timezone =)/\1 America\/Los_Angeles/' /etc/php5/apache2/php.ini
+RUN sed -ri 's/(display_errors =) (.*)/\1 on/' /etc/php5/apache2/php.ini
+RUN sed -ri 's/(display_errors =) (.*)/\1 on/' /etc/php5/cli/php.ini
 
 # Install memcached.
 RUN apt-get install -y memcached php5-memcached
@@ -75,21 +77,21 @@ RUN mkdir -p /volumes/covers
 RUN chown -R www-data:www-data /volumes/covers
 RUN chmod -R 777 /var/www/nZEDb/nzedb/config/
 
-# Add services.
-#RUN mkdir -p /etc/service/nginx
-#ADD nginx.sh /etc/service/nginx/run
-#RUN chmod +x /etc/service/nginx/run
-#RUN mkdir -p /etc/service/php5-fpm && mkdir /var/log/php5-fpm
-#ADD php5-fpm.sh /etc/service/php5-fpm/run
-#RUN chmod +x /etc/service/php5-fpm/run
 
 ADD entry.sh /root/entry.sh
 RUN chmod a+x /root/entry.sh
 
-ADD threaded.sh /root/threaded.sh
-RUN chmod 777 /root/threaded.sh && \
-    mv /var/www/nZEDb/misc/update/nix/screen/sequential/threaded.sh /var/www/nZEDb/misc/update/nix/screen/sequential/threaded.sh.bak && \
-    mv /root/threaded.sh /var/www/nZEDb/misc/update/nix/screen/sequential/threaded.sh
+# Optional - sets debug logging
+ADD settings.php /root/settings.php
+RUN chmod 777 /root/settings.php && \
+    cp /root/settings.php /var/www/nZEDb/nzedb/config/
+
+# Uncomment if you're configured already and have a config file to copy.
+ADD config.php /root/config.php
+RUN chmod 777 /root/config.php && \
+    mv /root/config.php /var/www/nZEDb/nzedb/config/config.php && \
+    touch /var/www/nZEDb/www/install/install.lock
+
 
 # Adjust php5 runtime directory
 RUN chmod -R 777 /var/lib/php5
@@ -112,9 +114,5 @@ ENV APACHE_LOCK_DIR /var/lock/apache2
 ENV APACHE_PID_FILE /var/run/apache2.pid
 ENV TERM dumb
 
-#ENTRYPOINT ["/usr/sbin/apache2"]
-#CMD ["-X"]
 ENTRYPOINT /root/entry.sh
 
-#ENTRYPOINT ["/usr/sbin/apache2ctl"]
-#CMD ["-e", "debug", "-DFOREGROUND"]

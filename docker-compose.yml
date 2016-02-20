@@ -16,4 +16,6 @@ nzedb_db:
     MYSQL_USER: 'nZED'
     MYSQL_PASSWORD: 'i8eight8s'
   volumes:
-    - /data/docker_volumes/mysql:/var/lib/mysql
+    - /ssd_persist/mysql:/var/lib/mysql
+    - /ssd_persist/mysql_tmp:/tmp
+    - /home/gwmullin/code/docker/nzedb/mysql_conf.d:/etc/mysql/conf.d
