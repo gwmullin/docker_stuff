@@ -1,0 +1,10 @@
+couchpotato:
+  build: .
+  ports: 
+    - "5050:5050"
+  volumes:
+    - /data/docker_volumes/couchpotato:/couchpotato
+    - /data/movies:/movies
+    - /data/downloads:/download
+  restart: always
+
