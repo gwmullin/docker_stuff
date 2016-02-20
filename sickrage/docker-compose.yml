@@ -1,0 +1,10 @@
+nzedb:
+  build: .
+  ports: 
+    - "8081:8080"
+  volumes:
+    - /data/docker_volumes/sickrage:/sickrage
+    - /data/tv:/tv
+    - /data/downloads:/download
+  restart: always
+
