@@ -1,5 +1,5 @@
 sabnzbd:
-  image: "sabnzbd/sabnzbd"
+  build: .
   container_name: "sabnzbd"
   volumes:
     - "/data/docker_volumes/sabnzbd:/datadir"
