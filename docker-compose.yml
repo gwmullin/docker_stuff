@@ -1,0 +1,91 @@
+version: '2'
+services:
+  couchpotato:
+    build: couchpotato
+    container_name: couchpotato
+    links:
+      - sabnzbd
+    ports:
+      - "5050:5050"
+    volumes:
+      - /data/docker_volumes/couchpotato:/couchpotato
+      - /data/movies:/movies
+      - /data/downloads:/download
+    environment:
+      TZ: "America/Los_Angeles"
+  
+  nzedb:
+    build: nzedb
+    container_name: nzedb
+    depends_on:
+      - nzedb_db
+    ports: 
+      - "8800:8800"
+    links:
+      - nzedb_db
+    volumes:
+      - /data/docker_volumes/covers:/volumes/covers
+      - /data/docker_volumes/nzbfiles:/volumes/nzbfiles
+    environment:
+      TZ: "America/Los_Angeles"
+  
+  nzedb_db:
+    image: mysql
+    container_name: nzedb_db
+    environment:
+      MYSQL_ROOT_PASSWORD: "blahBLAHblah"
+      MYSQL_DATABASE: "nzedb"
+      MYSQL_USER: "nZED"
+      MYSQL_PASSWORD: "i8eight8s"
+      TZ: "America/Los_Angeles"
+    volumes:
+      - /ssd_persist/mysql:/var/lib/mysql
+      - /ssd_persist/mysql_tmp:/tmp
+      - ./mysql/mysql_conf.d:/etc/mysql/conf.d
+  
+  plex:
+    image: linuxserver/plex
+    container_name: plex
+    volumes:
+      - /data/downloads:/download
+      - /data/tv:/data/tv
+      - /data/movies:/data/movies
+      - /ssd_persist/transcode:/transcode
+      - /data/docker_volumes/plex_config:/config
+    ports:
+      - "32400:32400"
+      - "32401:32401"
+      - "1900:1900/udp"
+      - "3005:3005"
+      - "5353:5353/udp"
+      - "8324:8324"
+      - "32410-32414:32410-32414/udp"
+      - "32469:32469"
+    environment:
+      TZ: "America/Los_Angeles"
+  
+  sabnzbd:
+    build: sabnzbd
+    container_name: sabnzbd
+    volumes:
+      - /data/docker_volumes/sabnzbd:/datadir
+      - /data/downloads:/download
+      - /data/tv:/tv
+      - /data/movies:/movies
+    ports:
+      - "8888:8080"
+    environment:
+      TZ: "America/Los_Angeles"
+  
+  sickrage:
+    build: sickrage
+    container_name: sickrage
+    links:
+      - sabnzbd
+    ports: 
+      - "8080:8080"
+    volumes:
+      - /data/docker_volumes/sickrage:/sickrage
+      - /data/tv:/tv
+      - /data/downloads:/download
+
