@@ -28,6 +28,7 @@ services:
       - /data/docker_volumes/nzbfiles:/volumes/nzbfiles
     environment:
       TZ: "America/Los_Angeles"
+      RUN_CHOWN: "true"
   
   nzedb_db:
     image: mysql
