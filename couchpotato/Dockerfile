@@ -1,6 +1,7 @@
 FROM ubuntu:trusty
 
 ENV TZ America/Los_Angeles
+ENV LOCAL_USER ${COUCHPOTATO_USER:-root}
 
 # Set maintainer
 MAINTAINER gwmullin <gwmullin@gmail.com>
@@ -19,15 +20,19 @@ RUN pip install --upgrade pyopenssl
 # Install additional software.
 RUN apt-get install -y htop nmon vnstat tcptrack bwm-ng mytop
 
-RUN mkdir -p /opt/couchpotato
+RUN mkdir /couchpotato && chown ${LOCAL_USER} /couchpotato
+RUN mkdir -p /opt/couchpotato && chown ${LOCAL_USER} /opt/couchpotato
+
+USER ${LOCAL_USER}
+
 WORKDIR /opt/couchpotato
 RUN git clone https://github.com/CouchPotato/CouchPotatoServer.git
 
-RUN mkdir /couchpotato
 
 VOLUME [ "/couchpotato" ]
 
 EXPOSE 5050
+
 
 ENTRYPOINT ["/opt/couchpotato/CouchPotatoServer/CouchPotato.py"]
 CMD ["--data_dir=/couchpotato", "--debug", "--console_log"]
