@@ -5,11 +5,17 @@ echo "Running scripts as ${LOCAL_USER}"
 
 if [[ "${RUN_CHOWN}" == "true" ]]; then
   echo "Running chown since RUN_CHOWN == true. Grab coffee, this may take a while."
+  echo ""
+  echo "$(date): chown/chmod on /volumes/nzbfiles starting"
   chown -R ${LOCAL_USER}:${APACHE_RUN_GROUP} /volumes/nzbfiles
   chmod -R 755 /volumes/nzbfiles
+  echo "$(date): chown/chmod on /volumes/nzbfiles finished"
 
+  echo "$(date): chown/chmod on /volumes/covers starting"
   chown -R ${LOCAL_USER}:${APACHE_RUN_GROUP} /volumes/covers && \
   chmod -R 755 /volumes/covers
+  echo "$(date): chown/chmod on /volumes/covers finished"
+  echo ""
   echo "Done chowning! Let's start the show."
 
 fi

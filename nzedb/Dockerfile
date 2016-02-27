@@ -63,7 +63,7 @@ ENV APACHE_RUN_USER="${APACHE_USER:-www-data}" \
     APACHE_PID_FILE="/var/run/apache2.pid"
 
 # Adjust php5 runtime directory
-RUN chmod -R 755 /var/lib/php5
+RUN chmod -R 777 /var/lib/php5
 
 # Clone nZEDb master and set directory permissions
 RUN mkdir -p /var/www

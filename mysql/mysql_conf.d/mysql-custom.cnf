@@ -2,4 +2,5 @@
 sql_mode=""
 sql-mode=""
 innodb_file_per_table=1
+innodb_buffer_pool_size=512M
 
