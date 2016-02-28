@@ -14,7 +14,7 @@ RUN \
   locale-gen en_US.UTF-8
 
 # Install basic software.
-RUN apt-get install -y git python-lxml xml-core libxslt1-dev libxslt1.1 libxml2-dev libxml2 libssl-dev libffi-dev python-pip python-dev libssl-dev build-essential
+RUN apt-get install -y git python-lxml xml-core libxslt1-dev libxslt1.1 libxml2-dev libxml2 libssl-dev libffi-dev python-pip python-dev libssl-dev build-essential p7zip unrar
 RUN pip install --upgrade pyopenssl
 
 # Install additional software.

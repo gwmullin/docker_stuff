@@ -1,3 +1,4 @@
 # Allow for environment files for overriding pw and user settings.
 **/*.env
 nzedb/config.php
+**/*.auth

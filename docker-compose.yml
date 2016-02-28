@@ -2,9 +2,13 @@ version: '2'
 services:
   couchpotato:
     build: couchpotato
+    depends_on:
+      - vpn
+      - proxy
     container_name: couchpotato
     links:
       - sabnzbd
+      - proxy
     ports:
       - "5050:5050"
     volumes:
@@ -80,9 +84,12 @@ services:
   
   sickrage:
     build: sickrage
+    depends_on:
+      - vpn
     container_name: sickrage
     links:
       - sabnzbd
+      - vpn:transmission
     ports: 
       - "8080:8080"
     volumes:
@@ -90,3 +97,36 @@ services:
       - /data/tv:/tv
       - /data/downloads:/download
 
+  vpn:
+    image: dperson/openvpn-client
+    container_name: vpn
+    cap_add:
+      - NET_ADMIN
+    command: ["-f"]
+    devices:
+      - /dev/net/tun
+    environment:
+      TZ: "America/Los_Angeles"
+    volumes:
+      - ./vpn/vpn:/vpn
+ 
+  transmission:
+    depends_on:
+      - vpn
+    image: dperson/transmission
+    container_name: transmission
+    network_mode: "container:vpn"
+    volumes:
+      - /data/docker_volumes/transmission:/var/lib/transmission-daemon
+      - /data/downloads:/download 
+     
+  proxy:
+    image: dperson/nginx
+    depends_on:
+      - vpn
+      - transmission
+    links:
+       - vpn:transmission
+    ports:
+       - "8081:80"
+    command: ["-w", "http://transmission:9091/transmission;/transmission"]
