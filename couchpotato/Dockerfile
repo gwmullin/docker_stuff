@@ -25,15 +25,20 @@ RUN mkdir -p /opt/couchpotato && chown ${LOCAL_USER} /opt/couchpotato
 
 USER ${LOCAL_USER}
 
-WORKDIR /opt/couchpotato
-RUN git clone https://github.com/CouchPotato/CouchPotatoServer.git
+RUN chown ${LOCAL_USER} /opt/couchpotato
+
+#
+# Add Couchpotato init script.
+#
+
+ADD start.sh /start.sh
+RUN chmod 755 /start.sh
 
 
 VOLUME [ "/couchpotato" ]
+VOLUME [ "/opt/couchpotato" ]
 
 EXPOSE 5050
 
-
-ENTRYPOINT ["/opt/couchpotato/CouchPotatoServer/CouchPotato.py"]
-CMD ["--data_dir=/couchpotato", "--debug", "--console_log"]
+CMD ["/start.sh"]
 

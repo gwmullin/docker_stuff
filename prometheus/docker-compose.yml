@@ -1,0 +1,11 @@
+version: '2'
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - /data/docker_volumes/prometheus:/prometheus
+    environment:
+      TZ: "America/Los_Angeles"
