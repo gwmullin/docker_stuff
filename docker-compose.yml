@@ -130,3 +130,14 @@ services:
     ports:
        - "8081:80"
     command: ["-w", "http://transmission:9091/transmission;/transmission"]
+
+  home-assistant:
+    image: balloob/home-assistant
+    container_name: home-assistant
+    network_mode: "host"
+    volumes:
+      - /data/docker_volumes/home-assistant:/config
+    environment:
+      TZ: "America/Los_Angeles"
+    ports:
+      - "8123:8123"
