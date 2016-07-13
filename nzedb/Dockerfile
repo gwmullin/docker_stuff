@@ -19,7 +19,8 @@ RUN \
 # Install basic software.
 RUN apt-get install -y curl git htop man software-properties-common unzip \
     vim wget ntp ntpdate time htop nmon vnstat tcptrack bwm-ng mytop \
-    libzen0 lame p7zip-full libav-tools sudo
+    libzen0 lame p7zip-full libav-tools sudo python-software-properties \
+    mediainfo php5-mcrypt 
 
 # Install Python MySQL modules.
 RUN \
@@ -65,13 +66,25 @@ ENV APACHE_RUN_USER="${APACHE_USER:-www-data}" \
 # Adjust php5 runtime directory
 RUN chmod -R 777 /var/lib/php5
 
+
+
 # Clone nZEDb master and set directory permissions
 RUN mkdir -p /var/www
 WORKDIR /var/www
 
-RUN git clone https://github.com/nZEDb/nZEDb.git
+# Get compose (wtf man, why.)
+ADD https://getcomposer.org/installer /var/www/composer-setup.php
+RUN php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+RUN composer create-project --no-dev --keep-vcs nzedb/nzedb
+RUN mv nzedb nZEDb
+
+#RUN git clone https://github.com/nZEDb/nZEDb.git
 RUN chown -R ${APACHE_RUN_USER}:${APACHE_RUN_GROUP} nZEDb
-RUN chmod 755 /var/www/nZEDb/libs/smarty/templates_c
+
+WORKDIR /var/www
+RUN mkdir -p /var/www/nZEDb/libs/smarty/templates_c
+RUN chmod -f 755 /var/www/nZEDb/libs/smarty/templates_c
 RUN chmod 755 nZEDb
 RUN chmod -R 755 /var/www/nZEDb/resources/covers
 RUN chmod 755 /var/www/nZEDb/www
@@ -97,6 +110,8 @@ RUN chown ${LOCAL_USER} config.php && chmod 755 config.php && \
     mv config.php /var/www/nZEDb/nzedb/config/config.php && \
     touch /var/www/nZEDb/www/install/install.lock
 
+WORKDIR /var/www/nZEDb
+RUN composer install
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
