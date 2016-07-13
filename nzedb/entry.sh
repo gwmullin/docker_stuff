@@ -20,7 +20,7 @@ if [[ "${RUN_CHOWN}" == "true" ]]; then
 
 fi
 echo "Running update for DB schema. This may take a while."
-php /var/www/nZEDb/zed update db
+/var/www/nZEDb/zed update db
 
 
 rm -f /var/run/apache2.pid
